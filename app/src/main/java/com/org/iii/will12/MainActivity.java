@@ -1,6 +1,7 @@
 package com.org.iii.will12;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,8 +40,12 @@ public class MainActivity extends AppCompatActivity {
     private UIHandler uiHandler;
     private ImageView imageView;
     private Bitmap bmp;
-    private String urlDownload;
+    private String urlDownload = "http://www.iii.org.tw";
     private File sdroot;
+
+    private ProgressDialog pDialog;
+
+
 
 
 
@@ -75,7 +80,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         sdroot = Environment.getExternalStorageDirectory();
+        Log.v("will", "i=" + sdroot);
 
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Download...");
+        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
     // UDP Sender
     public void test1(View v){
@@ -206,7 +215,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Download save to SDCard
-    public void test7(View v){
+    public void test7(View v) {
+        pDialog.show();
         new Thread(){
             @Override
             public void run() {
@@ -221,11 +231,15 @@ public class MainActivity extends AppCompatActivity {
                     FileOutputStream fout = new FileOutputStream(download);
                     byte[] buf = new byte[4096];    int len;
                     while ((len = in.read()) != -1) {
-
+                        fout.write(buf, 0, len);
                     }
-
+                    fout.flush();
+                    fout.close();
+                    Log.v("will", "Download OK");
+                    uiHandler.sendEmptyMessage(3);
                 }catch (Exception e){
                     Log.v("will", "test7" + e.toString());
+                    uiHandler.sendEmptyMessage(3);
                 }
             }
         }.start();
@@ -236,6 +250,16 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
+                try {
+                    MultipartUtility mu = new MultipartUtility("http://10.0.2.2/add2.php", "UTF-8");
+                    mu.addFormField("account", "mary");
+                    mu.addFormField("passwd", "654321");
+                    mu.addFilePart("upload", new File(sdroot, "will.pdf"));
+                    List<String> ret =  mu.finish();
+                    Log.v("will", ret.get(0));
+                }catch (Exception e){
+                    Log.v("will", e.toString());
+                }
             }
         }.start();
     }
@@ -244,19 +268,20 @@ public class MainActivity extends AppCompatActivity {
     private class UIHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
                     textView.setText(msg.getData().getCharSequence("data"));
                     break;
                 case 1:
-                    imageView.setImageBitmap((Bitmap)msg.getData().getParcelable("data"));
+                    imageView.setImageBitmap((Bitmap) msg.getData().getParcelable("data"));
                     break;
                 case 2:
                     imageView.setImageBitmap(bmp);
                     break;
+                case 3:
+                    pDialog.dismiss();
+                    break;
             }
         }
     }
-
-
 }
