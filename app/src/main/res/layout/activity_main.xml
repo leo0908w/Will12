@@ -12,18 +12,21 @@
         android:text="UDP Sender"
         android:onClick="test1"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TCP Client"
         android:onClick="test2"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Http 1"
         android:onClick="test3"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,6 +39,27 @@
         android:layout_height="wrap_content"
         android:text="Http 3"
         android:onClick="test5"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Http 4"
+        android:onClick="test6"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Http 5"
+        android:onClick="test7"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Http 6"
+        android:onClick="test8"
         />
 <ImageView
     android:id="@+id/image"
